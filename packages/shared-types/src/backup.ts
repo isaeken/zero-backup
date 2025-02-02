@@ -1,5 +1,5 @@
-import { TBackupProviderOptions } from './provider';
-import { TBackupSourceOptions } from './source';
+import { TBackupSourceOptions } from '@zero-backup/shared-types/source';
+import { TBackupProviderOptions } from '@zero-backup/shared-types/provider';
 
 export type TBackup = {
   filename: string;

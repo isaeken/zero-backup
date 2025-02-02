@@ -1,5 +1,5 @@
-import { TBackupSourceOptions } from './source';
-import { TBackupProviderOptions } from './provider';
+import { TBackupSourceOptions } from '@zero-backup/shared-types/source.ts';
+import { TBackupProviderOptions } from '@zero-backup/shared-types/provider.ts';
 
 export type TJobConfig = {
   name: string;
@@ -11,4 +11,3 @@ export type TJobConfig = {
 export type TConfig = {
   jobs: TJobConfig[];
 };
-

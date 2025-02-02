@@ -52,4 +52,4 @@ export type TBackupProviderOptions = {
   TAzureBackupProviderOptions |
   TFTPBackupProviderOptions |
   TSFTPBackupProviderOptions
-);
+  );

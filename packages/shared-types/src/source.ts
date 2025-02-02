@@ -37,4 +37,4 @@ export type TBackupSourceOptions = {
   TFTPBackupSourceOptions |
   TSFTPBackupSourceOptions |
   TDatabaseBackupSourceOptions
-);
+  );

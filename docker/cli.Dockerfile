@@ -15,7 +15,6 @@ RUN pnpm install
 COPY . .
 
 RUN pnpm -r run build
-RUN pnpm -r run compile
 
 FROM ubuntu:latest AS runner
 

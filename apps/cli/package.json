@@ -3,9 +3,8 @@
   "version": "0.0.1",
   "license": "MIT",
   "scripts": {
-    "dev": "ts-node -r tsconfig-paths/register src/index.ts",
-    "build": "tsc && tsc-alias && esbuild dist/index.js --bundle --platform=node --format=esm --outfile=dist/zero-backup.js",
-    "compile": "deno compile --allow-env --output dist/zero-backup dist/zero-backup.js"
+    "dev": "deno run dev",
+    "build": "deno compile --allow-all --output dist/zero-backup ./src/index.ts"
   },
   "dependencies": {
     "@zero-backup/shared-types": "workspace:*",
@@ -13,8 +12,10 @@
     "consola": "^3.4.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "fs-extra": "^11.3.0",
     "json5": "^2.2.3",
     "picocolors": "^1.1.1",
+    "tar": "^7.4.3",
     "tsconfig-paths": "^4.2.0",
     "yargs": "^17.7.2"
   },

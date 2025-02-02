@@ -17,6 +17,10 @@
     "declarationDir": "dist",
     "sourceMap": true,
     "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "paths": {
+      "@zero-backup/shared-types/*": ["./src/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"],

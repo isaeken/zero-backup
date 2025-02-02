@@ -1,4 +1,4 @@
-import { TBackupSourceOptions } from '@zero-backup/shared-types/src';
+import { TBackupSourceOptions } from '@zero-backup/shared-types/source.ts';
 
 export abstract class Source<T = TBackupSourceOptions> {
   public abstract name: string;
@@ -7,5 +7,5 @@ export abstract class Source<T = TBackupSourceOptions> {
     // ...
   }
 
-  public abstract handle(): string;
+  public abstract handle(): Promise<string>;
 }

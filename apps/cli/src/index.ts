@@ -1,6 +1,6 @@
 import { createConsola } from 'consola';
-import { TConfig } from '@zero-backup/shared-types';
-import { App } from '~/services/app';
+import { TConfig } from '@zero-backup/shared-types/config.ts';
+import { App } from '~/services/app.ts';
 
 export const logger = createConsola({
   level: 5

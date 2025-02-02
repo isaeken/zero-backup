@@ -1,5 +1,5 @@
-import { TBackupProviderOptions } from '@zero-backup/shared-types/src';
-import { Source } from '~/sources/source';
+import { TBackupProviderOptions } from '@zero-backup/shared-types/provider.ts';
+import { Source } from '~/sources/source.ts';
 
 export abstract class Provider<T = TBackupProviderOptions> {
   public abstract name: string;

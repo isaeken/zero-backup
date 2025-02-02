@@ -1,0 +1,16 @@
+{
+  "tasks": {
+    "dev": "deno run --watch ./src/index.ts"
+  },
+  "compilerOptions": {
+    "allowJs": true,
+    "strict": true
+  },
+  "imports": {
+    "/": "./",
+    "./": "./",
+    "~/": "./src/",
+
+    "@zero-backup/shared-types/": "../../packages/shared-types/src/"
+  }
+}
