@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "ts-node -r tsconfig-paths/register src/index.ts",
     "build": "tsc && tsc-alias && esbuild dist/index.js --bundle --platform=node --format=esm --outfile=dist/zero-backup.js",
-    "compile": "deno compile --output dist/zero-backup dist/zero-backup.js"
+    "compile": "deno compile --allow-env --output dist/zero-backup dist/zero-backup.js"
   },
   "dependencies": {
     "@zero-backup/shared-types": "workspace:*",
