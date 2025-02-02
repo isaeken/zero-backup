@@ -30,7 +30,7 @@ jobs:
 
       - name: Run tests in cli container
         run: |
-          docker-compose exec -T cli sh -c "./zero-backup --test"
+          docker-compose run -T cli sh -c "./zero-backup --test"
 
       - name: Stop and clean up
         run: |
