@@ -1,0 +1,32 @@
+{
+  "name": "@zero-backup/cli",
+  "version": "0.0.1",
+  "license": "MIT",
+  "scripts": {
+    "dev": "ts-node -r tsconfig-paths/register src/index.ts",
+    "build": "tsc && tsc-alias && esbuild dist/index.js --bundle --platform=node --format=esm --outfile=dist/zero-backup.js",
+    "compile": "deno compile --output dist/zero-backup dist/zero-backup.js"
+  },
+  "dependencies": {
+    "@zero-backup/shared-types": "workspace:*",
+    "@zero-backup/shared-utils": "workspace:*",
+    "consola": "^3.4.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "json5": "^2.2.3",
+    "picocolors": "^1.1.1",
+    "tsconfig-paths": "^4.2.0",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "@tsconfig/node20": "^20.1.4",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.0",
+    "@types/yargs": "^17.0.33",
+    "deno": "^2.1.9",
+    "esbuild": "^0.24.2",
+    "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.10",
+    "typescript": "^5.7.3"
+  }
+}

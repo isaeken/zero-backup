@@ -1,0 +1,17 @@
+{
+  "name": "@zero-backup/zero-backup",
+  "version": "0.0.1",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "pnpm -r run build",
+    "start:cli": "pnpm --filter @zero-backup/cli dev",
+    "start": "concurrently \"pnpm run start:cli\""
+  },
+  "devDependencies": {
+    "@tsconfig/node20": "^20.1.4",
+    "concurrently": "^9.1.2",
+    "pnpm": "^9.15.4",
+    "typescript": "^5.7.3"
+  }
+}

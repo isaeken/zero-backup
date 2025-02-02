@@ -1,0 +1,9 @@
+{
+  "name": "@zero-backup/shared-utils",
+  "version": "0.0.1",
+  "main": "src/index.ts",
+  "devDependencies": {
+    "@tsconfig/node20": "^20.1.4",
+    "typescript": "^5.7.3"
+  }
+}
