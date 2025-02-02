@@ -5,3 +5,4 @@ services:
     build:
       context: .
       dockerfile: docker/cli.Dockerfile
+    command: ["./zero-backup", "--test"]

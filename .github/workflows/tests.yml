@@ -1,0 +1,39 @@
+name: Run Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up docker buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build and start containers
+        run: |
+          docker-compose -f docker-compose.yml up -d --build
+
+      - name: Run tests in cli container
+        run: |
+          docker-compose exec -T cli sh -c "./zero-backup --test"
+
+      - name: Stop and clean up
+        run: |
+          docker-compose down
+
+      - name: Upload test logs (if failed)
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-logs
+          path: /opt/zero-backup/logs/

@@ -25,5 +25,7 @@ COPY --from=builder /app/apps/cli/dist/zero-backup ./zero-backup
 
 RUN chmod +x /opt/zero-backup/zero-backup
 
-CMD ["/opt/zero-backup/zero-backup"]
+ENTRYPOINT ["./zero-backup"]
+
+CMD ["--test"]
 
