@@ -3,14 +3,16 @@
   "version": "0.0.1",
   "license": "MIT",
   "scripts": {
-    "dev": "deno run dev",
-    "build": "deno compile --allow-all --output dist/zero-backup ./src/index.ts"
+    "dev": "ts-node -r tsconfig-paths/register src/main.ts",
+    "build": "tsc && esbuild ./src/main.ts --bundle --outfile=./dist/zero-backup.js --platform=node --packages=external"
+  },
+  "pkg": {
+    "outputPath": "dist"
   },
   "dependencies": {
     "@azure/storage-blob": "^12.26.0",
     "@google-cloud/storage": "^7.15.0",
-    "@zero-backup/shared-types": "workspace:*",
-    "@zero-backup/shared-utils": "workspace:*",
+    "@types/node": "^22.13.0",
     "basic-ftp": "^5.0.5",
     "consola": "^3.4.0",
     "dotenv": "^16.4.7",
@@ -28,7 +30,7 @@
     "@tsconfig/node20": "^20.1.4",
     "@types/bun": "^1.2.2",
     "@types/express": "^5.0.0",
-    "@types/node": "^22.13.0",
+    "@types/ssh2-sftp-client": "^9.0.4",
     "@types/yargs": "^17.0.33",
     "deno": "^2.1.9",
     "esbuild": "^0.24.2",

@@ -1,8 +1,9 @@
+import { createHash } from 'node:crypto';
 import { Bucket, Storage } from '@google-cloud/storage';
 import { FileSystem } from '~/filesystems/filesystem.ts';
 import { TGoogleCloudFileSystemProviderOptions } from '@zero-backup/shared-types/fileystem.ts';
 import { logger } from '~/services/logger.ts';
-import { createHash } from 'node:crypto';
+import { randomString } from "~/utils/random.ts";
 
 export class GoogleCloudFilesystem extends FileSystem<TGoogleCloudFileSystemProviderOptions> {
   public name = 'gcs';
@@ -87,8 +88,14 @@ export class GoogleCloudFilesystem extends FileSystem<TGoogleCloudFileSystemProv
     return createHash("sha256").update(buffer).digest("hex");
   }
 
-  public async backup(source: string, destination: string): Promise<void> {
+  public async backup(source: string, destination: string): Promise<string> {
     throw new Error('Backup in [GCS] not supported.');
+  }
+
+  public async tempDirectory(): Promise<string> {
+    const name = `/tmp/zero-backup/${randomString()}`;
+    await this.mkdir(name);
+    return name;
   }
 
   public get free(): Promise<number> {

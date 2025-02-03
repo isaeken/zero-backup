@@ -5,6 +5,7 @@ import * as os from 'node:os';
 import { TLocalFileSystemProviderOptions } from '@zero-backup/shared-types/fileystem.ts';
 import { FileSystem } from '~/filesystems/filesystem.ts';
 import { logger } from '~/services/logger.ts';
+import { randomString } from "~/utils/random.ts";
 
 export class LocalFileSystem extends FileSystem<TLocalFileSystemProviderOptions> {
   public name = 'local';
@@ -85,8 +86,14 @@ export class LocalFileSystem extends FileSystem<TLocalFileSystemProviderOptions>
     return createHash("sha256").update(fileBuffer).digest("hex");
   }
 
-  public async backup(source: string, destination: string): Promise<void> {
+  public async backup(source: string, destination: string): Promise<string> {
     throw new Error('Backup in [Local] not supported.');
+  }
+
+  public async tempDirectory(): Promise<string> {
+    const name = `/tmp/zero-backup/${randomString()}`;
+    await this.mkdir(name);
+    return name;
   }
 
   public get free(): Promise<number> {

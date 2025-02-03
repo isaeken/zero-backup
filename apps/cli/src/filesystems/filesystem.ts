@@ -31,7 +31,9 @@ export abstract class FileSystem<T = TFileSystemProviderOptions> {
 
   public abstract hash(path: string): Promise<string>;
 
-  public abstract backup(source: string, destination: string): Promise<void>;
+  public abstract backup(source: string, destination: string): Promise<string>;
+
+  public abstract tempDirectory(): Promise<string>;
 
   public abstract get free(): Promise<number>;
 

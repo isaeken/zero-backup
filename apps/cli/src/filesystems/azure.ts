@@ -1,9 +1,10 @@
 import { Buffer } from 'node:buffer';
+import { createHash } from 'node:crypto';
 import { BlobServiceClient, ContainerClient } from '@azure/storage-blob';
 import { TAzureFileSystemProviderOptions } from '@zero-backup/shared-types/fileystem.ts';
 import { logger } from '~/services/logger.ts';
 import { FileSystem } from '~/filesystems/filesystem.ts';
-import { createHash } from 'node:crypto';
+import { randomString } from "~/utils/random.ts";
 
 export class AzureFilesystem extends FileSystem<TAzureFileSystemProviderOptions> {
   public name = 'azure';
@@ -93,8 +94,14 @@ export class AzureFilesystem extends FileSystem<TAzureFileSystemProviderOptions>
     return createHash('sha256').update(buffer).digest('hex');
   }
 
-  public async backup(source: string, destination: string): Promise<void> {
+  public async backup(source: string, destination: string): Promise<string> {
     throw new Error('Backup in [Azure] not supported.');
+  }
+
+  public async tempDirectory(): Promise<string> {
+    const name = `/tmp/zero-backup/${randomString()}`;
+    await this.mkdir(name);
+    return name;
   }
 
   public get free(): Promise<number> {

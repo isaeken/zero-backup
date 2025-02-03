@@ -1,8 +1,12 @@
-import ftp from 'basic-ftp';
-import { FileSystem } from "~/filesystems/filesystem.ts";
-import { TFTPFileSystemProviderOptions } from '@zero-backup/shared-types/fileystem.ts';
-import { logger } from "~/services/logger.ts";
 import { createHash } from 'node:crypto';
+import ftp from 'basic-ftp';
+import { FileSystem } from '~/filesystems/filesystem.ts';
+import { TFTPFileSystemProviderOptions } from '@zero-backup/shared-types/fileystem.ts';
+import { logger } from '~/services/logger.ts';
+import { randomString } from '~/utils/random.ts';
+import fs from 'node:fs';
+import path from 'node:path';
+import * as os from 'os';
 
 export class FTPFilesystem extends FileSystem<TFTPFileSystemProviderOptions> {
   public name = 'ftp';
@@ -13,6 +17,11 @@ export class FTPFilesystem extends FileSystem<TFTPFileSystemProviderOptions> {
     super(config);
     this.client = new ftp.Client();
     this.client.ftp.verbose = true;
+  }
+
+  private async createTempFile(): Promise<string> {
+    const tempFile = fs.mkdtempSync(path.join(os.tmpdir(), 'zero-backup-'));
+    return `${tempFile}/tempfile`;
   }
 
   public async connect(): Promise<void> {
@@ -34,25 +43,24 @@ export class FTPFilesystem extends FileSystem<TFTPFileSystemProviderOptions> {
   }
 
   public async write(filePath: string, content: string): Promise<void> {
-    const tempFile = await Deno.makeTempFile();
-    await Deno.writeTextFile(tempFile, content);
+    const tempFile = await this.createTempFile();
+    fs.writeFileSync(tempFile, content);
     await this.client.uploadFrom(tempFile, filePath);
-    await Deno.remove(tempFile);
+    fs.unlinkSync(tempFile);
   }
 
   public async read(filePath: string): Promise<string> {
-    const tempFile = await Deno.makeTempFile();
+    const tempFile = await this.createTempFile();
     await this.client.downloadTo(tempFile, filePath);
-    const data = await Deno.readTextFile(tempFile);
-    await Deno.remove(tempFile);
-    return data;
+    const content = fs.readFileSync(tempFile, 'utf-8');
+    fs.unlinkSync(tempFile);
+    return content;
   }
 
   public async exists(filePath: string): Promise<boolean> {
     try {
       await this.client.size(filePath);
       return true;
-    // deno-lint-ignore no-explicit-any
     } catch (error: any) {
       if (error.code === 550) return false; // File not found
       throw error;
@@ -86,16 +94,22 @@ export class FTPFilesystem extends FileSystem<TFTPFileSystemProviderOptions> {
   }
 
   public async hash(path: string): Promise<string> {
-    const tmp = await Deno.makeTempFile();
-    await this.client.downloadTo(tmp, path);
-    const buffer = await Deno.readFile(tmp);
-    const hash = createHash('sha256').update(buffer).digest('hex');
-    await Deno.remove(tmp);
+    const tempFile = await this.createTempFile();
+    await this.client.downloadTo(tempFile, path);
+    const fileBuffer = fs.readFileSync(tempFile);
+    const hash = createHash("sha256").update(fileBuffer).digest("hex");
+    fs.unlinkSync(tempFile);
     return hash;
   }
 
-  public async backup(source: string, destination: string): Promise<void> {
+  public async backup(source: string, destination: string): Promise<string> {
     throw new Error('Backup in [FTP] not supported.');
+  }
+
+  public async tempDirectory(): Promise<string> {
+    const name = `/tmp/zero-backup/${randomString()}`;
+    await this.mkdir(name);
+    return name;
   }
 
   public get free(): Promise<number> {

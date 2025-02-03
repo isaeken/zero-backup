@@ -6,6 +6,12 @@ services:
       context: .
       dockerfile: docker/cli.Dockerfile
     command: ["/opt/zero-backup/zero-backup", "--test"]
+    depends_on:
+      - minio
+      - azurite
+      - fake-gcs
+      - ftp
+      - sftp
 
   minio:
     image: minio/minio

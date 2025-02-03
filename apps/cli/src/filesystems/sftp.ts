@@ -1,10 +1,11 @@
 import { Buffer } from 'node:buffer';
 import fs from 'node:fs';
 import { createHash } from 'node:crypto';
-import SftpClient from 'ssh2-sftp-client';
 import { TSFTPFileSystemProviderOptions } from '@zero-backup/shared-types/fileystem.ts';
 import { FileSystem } from "~/filesystems/filesystem.ts";
 import { logger } from "~/services/logger.ts";
+import { randomString } from "~/utils/random.ts";
+import SftpClient from 'ssh2-sftp-client';
 
 export class SftpFileSystem extends FileSystem<TSFTPFileSystemProviderOptions> {
   public name = 'sftp';
@@ -95,8 +96,14 @@ export class SftpFileSystem extends FileSystem<TSFTPFileSystemProviderOptions> {
     return hash;
   }
 
-  public async backup(source: string, destination: string): Promise<void> {
+  public async backup(source: string, destination: string): Promise<string> {
     throw new Error('Backup in [SFTP] not supported.');
+  }
+
+  public async tempDirectory(): Promise<string> {
+    const name = `/tmp/zero-backup/${randomString()}`;
+    await this.mkdir(name);
+    return name;
   }
 
   public get free(): Promise<number> {
