@@ -1,17 +1,12 @@
 version: '3.8'
 
 services:
-  cli:
+  dev:
     build:
       context: .
-      dockerfile: docker/cli.Dockerfile
-    command: ["/opt/zero-backup/zero-backup", "--test"]
-    depends_on:
-      - minio
-      - azurite
-      - fake-gcs
-      - ftp
-      - sftp
+      dockerfile: docker/dev.Dockerfile
+    volumes:
+      - ./:/src
 
   minio:
     image: minio/minio

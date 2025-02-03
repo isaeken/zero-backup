@@ -5,6 +5,7 @@ import { TAzureFileSystemProviderOptions } from '@zero-backup/shared-types/filey
 import { logger } from '~/services/logger.ts';
 import { FileSystem } from '~/filesystems/filesystem.ts';
 import { randomString } from "~/utils/random.ts";
+import { PassThrough, Readable, Writable } from 'node:stream';
 
 export class AzureFilesystem extends FileSystem<TAzureFileSystemProviderOptions> {
   public name = 'azure';
@@ -34,6 +35,19 @@ export class AzureFilesystem extends FileSystem<TAzureFileSystemProviderOptions>
     await blockBlobClient.upload(content, Buffer.byteLength(content));
   }
 
+  public async writeStream(stream: Readable, path: string) {
+    const blockBlobClient = this.containerClient.getBlockBlobClient(path);
+    new Writable({
+      write(chunk, encoding, callback) {
+        blockBlobClient
+          .getAppendBlobClient()
+          .appendBlock(chunk, chunk.length)
+          .then(() => callback())
+          .catch((error) => callback(error));
+      }
+    });
+  }
+
   public async read(filePath: string): Promise<string> {
     const blockBlobClient = this.containerClient.getBlockBlobClient(filePath);
     const downloadResponse = await blockBlobClient.download();
@@ -43,6 +57,22 @@ export class AzureFilesystem extends FileSystem<TAzureFileSystemProviderOptions>
     }
 
     return await downloaded.text();
+  }
+
+  public async readStream(path: string): Promise<Readable> {
+    const blockBlobClient = this.containerClient.getBlockBlobClient(path);
+    const downloadResponse = await blockBlobClient.download();
+
+    if (!downloadResponse.readableStreamBody) {
+      throw new Error(`File not found or unreadable: ${path}`)
+    }
+
+    const passThrough = new PassThrough();
+    downloadResponse
+      .readableStreamBody
+      .pipe(passThrough);
+
+    return passThrough;
   }
 
   public async exists(filePath: string): Promise<boolean> {

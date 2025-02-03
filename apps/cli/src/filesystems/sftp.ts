@@ -6,6 +6,7 @@ import { FileSystem } from "~/filesystems/filesystem.ts";
 import { logger } from "~/services/logger.ts";
 import { randomString } from "~/utils/random.ts";
 import SftpClient from 'ssh2-sftp-client';
+import { PassThrough, Readable, Writable } from 'node:stream';
 
 export class SftpFileSystem extends FileSystem<TSFTPFileSystemProviderOptions> {
   public name = 'sftp';
@@ -38,22 +39,34 @@ export class SftpFileSystem extends FileSystem<TSFTPFileSystemProviderOptions> {
     await this.client.put(Buffer.from(content), path);
   }
 
+  public async writeStream(stream: Readable, path: string) {
+    await this.client.put(stream, path);
+  }
+
   public async read(path: string): Promise<string> {
     const buffer = await this.client.get(path, undefined, {});
     return buffer.toString();
+  }
+
+  public async readStream(filePath: string): Promise<Readable> {
+    const passThrough = new PassThrough();
+    this.client
+      .get(filePath)
+      .then((stream) => {
+        // @ts-ignore
+        stream.pipe(passThrough);
+      })
+      .catch((err) => passThrough.destroy(err));
+
+    return passThrough;
   }
 
   public async exists(path: string): Promise<boolean> {
     try {
       await this.client.stat(path);
       return true;
-    // deno-lint-ignore no-explicit-any
     } catch (e: any) {
-      if (e.code === 2) {
-        return false;
-      }
-
-      throw e;
+      return false;
     }
   }
 

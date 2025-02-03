@@ -1,6 +1,8 @@
 import { TJobConfig } from '@zero-backup/shared-types/config.ts';
 import { logger } from "~/services/logger.ts";
 import { createFileSystem } from "~/filesystems/index.ts";
+import { getFormattedDate } from '~/utils/date.ts';
+import { randomString } from '~/utils/random.ts';
 
 export class Job {
   public constructor(public job: TJobConfig) {
@@ -13,10 +15,10 @@ export class Job {
 
   private makeBackupFileName(path: string): string {
     return path
-      .replace('{name}', `backup-${new Date().toISOString()}`)
-      .replace('{date}', new Date().toISOString())
+      .replace('{extension}', 'tar.gz')
+      .replace('{date}', getFormattedDate('YYYY-MM-DD_HH-mm'))
       .replace('{timestamp}', new Date().getTime().toString())
-      .replace('{random}', Math.random().toString())
+      .replace('{random}', randomString(8))
       .replace('{uuid}', Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15))
     ;
   }
@@ -28,18 +30,20 @@ export class Job {
       const storagePath = this.makeBackupFileName(storage.path);
 
       const backupFs = createFileSystem(backup.adapter);
-      const storageFs = createFileSystem(storage.adapter);
-
       await backupFs.connect();
+      const storageFs = createFileSystem(storage.adapter);
+      await storageFs.connect();
+
       const file = await backupFs.backup(backup.path, await backupFs.tempDirectory());
-      const contents = await backupFs.read(file);
+      await backupFs.transfer(storageFs, file, storagePath);
+
+
       const hash = await backupFs.hash(file);
 
-      await storageFs.connect();
-      await storageFs.write(storagePath, contents);
       if (await storageFs.hash(storagePath) !== hash) {
         throw new Error('Hash mismatch');
       }
+
       await backupFs.disconnect();
       await storageFs.disconnect();
 

@@ -1,4 +1,5 @@
 import { TFileSystemProviderOptions } from '@zero-backup/shared-types/fileystem.ts';
+import { Readable } from 'node:stream';
 
 export abstract class FileSystem<T = TFileSystemProviderOptions> {
   public abstract name: string;
@@ -13,7 +14,11 @@ export abstract class FileSystem<T = TFileSystemProviderOptions> {
 
   public abstract write(path: string, content: string): Promise<void>;
 
+  public abstract writeStream(stream: Readable, path: string): Promise<void>;
+
   public abstract read(path: string): Promise<string>;
+
+  public abstract readStream(path: string): Promise<Readable>;
 
   public abstract exists(path: string): Promise<boolean>;
 
@@ -40,4 +45,11 @@ export abstract class FileSystem<T = TFileSystemProviderOptions> {
   public abstract get used(): Promise<number>;
 
   public abstract get total(): Promise<number>;
+
+  public async transfer(target: FileSystem, source: string, destination: string) {
+    await target.writeStream(
+      await this.readStream(source),
+      destination,
+    );
+  }
 }

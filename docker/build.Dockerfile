@@ -31,6 +31,9 @@ RUN apt-get update && \
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/cli/dist/zero-backup.js ./zero-backup.js
 
+COPY storage/data /data
+RUN mkdir /backups
+
 RUN chmod +x /opt/zero-backup/zero-backup.js
 
 ENTRYPOINT ["/bin/sh", "-c"]

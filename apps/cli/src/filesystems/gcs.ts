@@ -4,6 +4,7 @@ import { FileSystem } from '~/filesystems/filesystem.ts';
 import { TGoogleCloudFileSystemProviderOptions } from '@zero-backup/shared-types/fileystem.ts';
 import { logger } from '~/services/logger.ts';
 import { randomString } from "~/utils/random.ts";
+import { Readable, Writable } from 'node:stream';
 
 export class GoogleCloudFilesystem extends FileSystem<TGoogleCloudFileSystemProviderOptions> {
   public name = 'gcs';
@@ -40,10 +41,20 @@ export class GoogleCloudFilesystem extends FileSystem<TGoogleCloudFileSystemProv
     await file.save(content);
   }
 
+  public async writeStream(stream: Readable, path: string) {
+    const file = this.bucket.file(path);
+    file.createWriteStream();
+  }
+
   public async read(filePath: string): Promise<string> {
     const file = this.bucket.file(filePath);
     const [contents] = await file.download();
     return contents.toString();
+  }
+
+  public async readStream(path: string): Promise<Readable> {
+    const file = this.bucket.file(path);
+    return file.createReadStream();
   }
 
   public async exists(filePath: string): Promise<boolean> {

@@ -5,6 +5,7 @@ import { TMinioFileSystemProviderOptions } from "@zero-backup/shared-types/filey
 import { FileSystem } from "~/filesystems/filesystem.ts";
 import { logger } from "~/services/logger.ts";
 import { randomString } from "~/utils/random.ts";
+import { PassThrough, Readable, Writable } from 'node:stream';
 
 export class MinioFilesystem extends FileSystem<TMinioFileSystemProviderOptions> {
   public name = 'minio';
@@ -39,9 +40,20 @@ export class MinioFilesystem extends FileSystem<TMinioFileSystemProviderOptions>
     await this.client.putObject(this.config.bucketName, filePath, content);
   }
 
+  public async writeStream(stream: Readable, path: string) {
+    const passThrough = new PassThrough();
+    this.client
+      .putObject(this.config.bucketName, path, passThrough)
+      .catch((err) => passThrough.destroy(err));
+  }
+
   public async read(filePath: string): Promise<string> {
     const stream = await this.client.getObject(this.config.bucketName, filePath);
     return await this.streamToString(stream);
+  }
+
+  public async readStream(path: string): Promise<Readable> {
+    return await this.client.getObject(this.config.bucketName, path);
   }
 
   public async exists(filePath: string): Promise<boolean> {
