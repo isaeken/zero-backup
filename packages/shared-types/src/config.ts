@@ -1,11 +1,21 @@
-import { TBackupSourceOptions } from '@zero-backup/shared-types/source.ts';
-import { TBackupProviderOptions } from '@zero-backup/shared-types/provider.ts';
+import { TFileSystemProviderOptions } from '@zero-backup/shared-types/fileystem.ts';
+
+export type TBackupOptions = {
+  type: 'filesystem';
+  path: string;
+  adapter: TFileSystemProviderOptions;
+};
+
+export type TStorageOptions = {
+  path: string;
+  adapter: TFileSystemProviderOptions;
+};
 
 export type TJobConfig = {
   name: string;
   cron: string;
-  source: TBackupSourceOptions;
-  provider: TBackupProviderOptions;
+  backup: TBackupOptions;
+  storage: TStorageOptions;
 };
 
 export type TConfig = {

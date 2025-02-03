@@ -1,9 +1,8 @@
 {
   "tasks": {
-    "dev": "deno run --watch ./src/index.ts"
+    "dev": "deno run --watch ./src/main.ts"
   },
   "compilerOptions": {
-    "allowJs": true,
     "strict": true
   },
   "imports": {

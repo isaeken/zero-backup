@@ -7,20 +7,26 @@
     "build": "deno compile --allow-all --output dist/zero-backup ./src/index.ts"
   },
   "dependencies": {
+    "@azure/storage-blob": "^12.26.0",
+    "@google-cloud/storage": "^7.15.0",
     "@zero-backup/shared-types": "workspace:*",
     "@zero-backup/shared-utils": "workspace:*",
+    "basic-ftp": "^5.0.5",
     "consola": "^3.4.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "fs-extra": "^11.3.0",
     "json5": "^2.2.3",
+    "minio": "^8.0.4",
     "picocolors": "^1.1.1",
+    "ssh2-sftp-client": "^11.0.0",
     "tar": "^7.4.3",
     "tsconfig-paths": "^4.2.0",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.4",
+    "@types/bun": "^1.2.2",
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.0",
     "@types/yargs": "^17.0.33",
